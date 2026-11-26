@@ -86,6 +86,7 @@ export function App() {
 
   return (
     <div className="shell">
+      <a className="skip-link" href="#content">Skip to main content</a>
       <div className="sticky">
         <header className="topbar">
           <a className="brand" href="#/road" onClick={(event) => { event.preventDefault(); go('road'); }}>
@@ -132,7 +133,7 @@ export function App() {
         <div className="disclaimer" role="status" data-testid="disclaimer">{DISCLAIMER}</div>
       </div>
 
-      <main id="content">
+      <main id="content" tabIndex={-1}>
         {route.view === 'road' && <Road onOpenApp={(id) => go('app', id)} />}
         {route.view === 'catalog' && <Catalog />}
         {route.view === 'builder' && (

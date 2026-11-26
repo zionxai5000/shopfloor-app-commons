@@ -35,7 +35,23 @@ h2 { font-size: 1.35rem; }
 p { margin: 0 0 0.7rem; }
 a { color: var(--blue); }
 
-.shell { min-height: 100vh; }
+.shell { min-height: 100vh; position: relative; }
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: 8px;
+  z-index: 100;
+  transform: translateY(-200%);
+  background: var(--ink);
+  color: var(--white);
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.skip-link:focus {
+  transform: none;
+}
 .sticky { position: sticky; top: 0; z-index: 30; background: rgba(255, 252, 248, 0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 .topbar { display: flex; align-items: center; gap: 16px; padding: 10px 20px; }
 .brand { display: flex; gap: 10px; align-items: center; text-decoration: none; color: inherit; min-width: 150px; }
@@ -140,10 +156,11 @@ a { color: var(--blue); }
 .builder-entry, .rail { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
 .rail-empty { border: 1px dashed var(--line); border-radius: 12px; padding: 28px 16px; color: var(--muted); }
 .snaps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.snap { border: 1px solid var(--line); border-radius: 10px; padding: 10px; opacity: 0.35; }
-.snap.shown { opacity: 1; animation: snap-in 0.4s ease both; }
+.snap { border: 1px dashed #6f675c; border-radius: 10px; padding: 10px; background: var(--paper); }
+.snap.shown { border: 1px solid var(--line); background: var(--white); animation: snap-in 0.4s ease both; }
 .snap-top { display: flex; gap: 8px; align-items: baseline; }
 .snap-top em { margin-left: auto; font-style: normal; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.snap-top em.pending { color: var(--ink); background: var(--paper-2); border: 1px solid #6f675c; border-radius: 999px; padding: 1px 8px; }
 .snap-top em.rule { color: var(--amber); }
 @keyframes snap-in { from { transform: translateY(8px); } to { transform: none; } }
 

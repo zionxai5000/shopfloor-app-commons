@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const STEPS = [
   {
@@ -28,8 +28,15 @@ const STEPS = [
   },
 ];
 
+function focusableIn(node) {
+  return [...node.querySelectorAll('button, a[href], input, select, textarea')].filter((el) => !el.disabled);
+}
+
 export function Tour({ step, routeKey, onNext, onBack, onClose }) {
   const [box, setBox] = useState(null);
+  const dialogRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const current = STEPS[step];
 
   useEffect(() => {
@@ -58,16 +65,59 @@ export function Tour({ step, routeKey, onNext, onBack, onClose }) {
     };
   }, [step, current.selector, routeKey]);
 
+  useEffect(() => {
+    dialogRef.current?.focus({ preventScroll: true });
+  }, [step]);
+
+  useEffect(() => {
+    function onKey(event) {
+      const node = dialogRef.current;
+      if (!node) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onCloseRef.current();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = focusableIn(node);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || active === node || !node.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
+  useEffect(() => () => {
+    document.querySelector('[data-testid="start-tour"]')?.focus();
+  }, []);
+
   const cardOnTop = box ? box.top > window.innerHeight * 0.42 : false;
 
   return (
     <>
-      {box && <div className="tour-hole" style={box} />}
-      <div className={`tour-card${cardOnTop ? ' top' : ''}`} role="dialog" aria-label="Demo tour">
-        <p className="mono-label">Demo tour · {step + 1} of {STEPS.length}</p>
-        <h2>{current.title}</h2>
-        <p>{current.body}</p>
-        <div className="dots">
+      {box && <div className="tour-hole" style={box} aria-hidden="true" />}
+      <div
+        ref={dialogRef}
+        className={`tour-card${cardOnTop ? ' top' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tour-dialog-title"
+        tabIndex={-1}
+        data-testid="tour-dialog"
+      >
+        <p className="mono-label" id="tour-dialog-kicker">Demo tour · {step + 1} of {STEPS.length}</p>
+        <h2 id="tour-dialog-title">{current.title}</h2>
+        <p id="tour-dialog-body">{current.body}</p>
+        <div className="dots" aria-hidden="true">
           {STEPS.map((item, index) => <span key={item.title} className={index === step ? 'on' : ''} />)}
         </div>
         <div className="row-actions">

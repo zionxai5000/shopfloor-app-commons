@@ -218,7 +218,7 @@ export function Builder({ tourStep, tourNonce, onOpen }) {
                       <div className="snap-top">
                         <span className="mono">{String(index + 1).padStart(2, '0')}</span>
                         <strong>{block?.name || item.id}</strong>
-                        <em className={item.role === 'release rule' ? 'rule' : ''}>{item.role}</em>
+                        <em className={shown ? (item.role === 'release rule' ? 'rule' : '') : 'pending'}>{shown ? item.role : 'Not matched'}</em>
                       </div>
                       {shown && <p>{item.why}</p>}
                     </li>
